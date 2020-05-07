@@ -10,7 +10,6 @@ PDFFile = open(PDFsource,'rb')
 
 PDF = PyPDF3.PdfFileReader(PDFFile)
 pages = PDF.getNumPages()
-print(pages)
 key = '/Annots'
 uri = '/URI'
 anc = '/A'
