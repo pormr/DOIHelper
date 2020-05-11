@@ -1,6 +1,6 @@
 # DOIHelper
 
-Extracts DOI Links from PDF files (**PyPDF3** and **requests** are required).
+Extracts DOI Links and bibilography from PDF files (**PyPDF3** and **requests** are required).
 
 Usage:`python DOIExtract.py "<PDF file>"`
 
