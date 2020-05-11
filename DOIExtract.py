@@ -1,4 +1,4 @@
-import PyPDF3, sys
+import PyPDF3, sys, requests
 
 try:
     PDFsource = sys.argv[1]
@@ -13,6 +13,10 @@ pages = PDF.getNumPages()
 key = '/Annots'
 uri = '/URI'
 anc = '/A'
+bib = []
+headers = {
+    "Accept": "text/x-bibliography"
+}
 
 for page in range(pages):
 
@@ -24,4 +28,9 @@ for page in range(pages):
         for a in ann:
             u = a.getObject()
             if uri in u[anc] and "doi" in u[anc][uri]:
-                print(u[anc][uri])
+                bib.append(u[anc][uri])
+
+
+for bib_url in bib:
+    print(bib_url)
+    print(requests.post(bib_url, headers=headers).text)
