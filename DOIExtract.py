@@ -1,13 +1,27 @@
-import PyPDF3, sys, requests
+import PyPDF3, sys, argparse, requests
+
+arg_parser = argparse.ArgumentParser()
+arg_parser.description = 'DOIHelper ---- Extracts DOI Links and bibilography from PDF files.'
+arg_parser.add_argument('"<PDF file>"', help='target PDF file', type=str)
+arg_parser.add_argument('-o', '--output', help='output file location', default='')
+arg_parser.add_argument('-d', '--offline', help='disable bibliography(offline mode)', action='store_true')
+
+if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+    arg_parser.print_help()
+    sys.exit(1)
 
 try:
-    PDFsource = sys.argv[1]
+    args = arg_parser.parse_args()
 except:
     print('Incorrect/invalid argument(s) supplied.')
     sys.exit(1)
 
-PDFFile = open(PDFsource,'rb')
 
+
+PDFsource = getattr(args, '"<PDF file>"')
+network_available = not args.offline
+
+PDFFile = open(PDFsource,'rb')
 PDF = PyPDF3.PdfFileReader(PDFFile)
 pages = PDF.getNumPages()
 key = '/Annots'
@@ -30,7 +44,14 @@ for page in range(pages):
             if uri in u[anc] and "doi" in u[anc][uri]:
                 bib.append(u[anc][uri])
 
-
+if args.output != '':
+    file_out = open(args.output, 'w', encoding='utf-8')
+else:
+    file_out = sys.stdout
+    
 for bib_url in bib:
-    print(bib_url)
-    print(requests.post(bib_url, headers=headers).text)
+    file_out.write(bib_url + '\n')
+    if network_available:
+        file_out.write(requests.post(bib_url, headers=headers).text)
+
+sys.exit(1)
